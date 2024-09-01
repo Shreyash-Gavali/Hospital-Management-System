@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login | Hospital Management System</title>
+<link rel="stylesheet" href="../css/Login.css">
+<script
+      src="https://kit.fontawesome.com/e220bfdb76.js"
+      crossorigin="anonymous"
+    ></script>
+</head>
+<body>
+<div class="main-flex-container">
+      <h1>Welcome To Hospital Management System</h1>
+      <h2>Login</h2>
+      <form method="POST" action="../jsp/Login.jsp">
+        <field>
+          <fieldset>
+            <legend class="username">
+              <label for="userName" id="userName-label"> User Name </label>
+            </legend>
+            <input type="text" name="userName" id="userName" required placeholder=""/>
+          </fieldset>
+          <fieldset>
+            <legend class="password">
+              <label for="userPass" id="userPass-label"> Password </label>
+            </legend>
+            <input type="password" name="userPass" id="userPass" required /><br />
+          </fieldset>
+          <fieldset>
+            <input type="submit" id="submit" />
+            <p id="signup">
+              New to Hospital Management System ?
+              <a href="../jsp/Signup.jsp"> Signup</a>
+            </p>
+          </fieldset>
+        </field>
+      </form>
+    </div>
+    <script>
+      let userNameLabel = document.querySelector(".username");
+      let userPassLabel = document.querySelector(".password");
+      let userName = document
+        .querySelector("#userName")
+        .addEventListener("focus", () => {
+          userNameLabel.style.top = "10px";
+          userNameLabel.style.color = "#663399";
+        });
+      document.querySelector("#userName").addEventListener("focusout", () => {
+        userNameLabel.style.top = "20px";
+        userNameLabel.style.color = "black";
+      });
+
+      let userPass = document
+        .querySelector("#userPass")
+        .addEventListener("focus", () => {
+          userPassLabel.style.top = "10px";
+          userPassLabel.style.color = "#663399";
+        });
+      document.querySelector("#userPass").addEventListener("focusout", () => {
+        userPassLabel.style.top = "20px";
+        userPassLabel.style.color = "black";
+      });
+      let showPass = document.querySelector("#showPass");
+    </script>
+</body>
+</html>

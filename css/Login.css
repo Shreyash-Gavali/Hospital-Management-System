@@ -1,0 +1,92 @@
+@charset "UTF-8";
+      @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Teko:wght@300..700&display=swap");
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+        transition: all 2s ease-in-out;
+        
+      }
+      .main-flex-container {
+        width: 40%;
+        height: 60%;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 10px;
+        text-align: center;
+        font-family: "DM Sans", sans-serif;
+        font-weight: 200;
+        display: flex;
+        /* justify-content: space-evenly; */
+        flex-direction: column;
+        box-shadow: 0px 0px 20px rgb(107, 105, 105);
+        /* align-items: center; */
+      }
+      .main-flex-container > form > field > fieldset {
+        border: none;
+      }
+      input[type="text"],
+      input[type="password"] {
+        width: 400px;
+        height: 30px;
+        padding: 5px;
+        /* margin-top: 10px; */
+        text-indent: 20px;
+        font-family: "Poppins",sans-serif;
+      }
+      input[type="text"]:hover,
+      input[type="text"]:focus,
+      input[type="password"]:focus,
+      input[type="password"]:focus {
+        outline-color: #663399;
+        font-family:"Poppins",sans-serif;
+      }
+      fieldset {
+        margin: 20px;
+      }
+      legend {
+        position: relative;
+        left: -150px;
+        top: 15px;
+        color: black;
+        font-family: "Poppins", sans-serif;
+        z-index: 1;
+        
+        width: 120px;
+        font-weight: 300;
+        /* border: solid 2px black; */
+        transition: top 0.2s ease-in-out;
+      }
+      legend>label{
+      background-color: white;
+      }
+      #userNameLabel {
+        transition: top 2s linear;
+      }
+      #submit {
+        width: 400px;
+        height: 40px;
+        background-color: inherit;
+        border-radius: 8px;
+        border-color: lightgrey;
+        font-family: "Poppins", sans-serif;
+        box-shadow: 0px 0px 10px whitesmoke;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.848);
+      }
+      #submit:hover {
+        border-color: #663399;
+        box-shadow: 0px 0px 10px #66339978;
+        color:#663399;
+      }
+      #signup {
+        margin-top: 30px;
+        font-weight: 400;
+      }
+      #signup > a {
+        text-decoration: none;
+        color: #663399;
+      }
