@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
       <%@page import="java.sql.*" %>
 <%@page import="jakarta.servlet.*" %>
+<%@page import="java.io.*" %>
 
 <!DOCTYPE html>
 <html>
@@ -96,61 +97,35 @@ Connection con ;
 PreparedStatement ps;
 Statement stmt;
 String dbUrl = "jdbc:mysql://localhost:3306";
-String dbUser = request.getParameter("dbUser");
-String dbPass = request.getParameter("dbPass");
+ String dbUser= request.getParameter("dbUser");
+String dbPass = request.getParameter("dbPass"); 
+
+//Writing Username and password to file pass.txt
+
 int result;
+//Connecting to Database
 try{
 	Class.forName("com.mysql.jdbc.Driver");
 	con=DriverManager.getConnection(dbUrl,dbUser,dbPass);
-	if(con!=null)
+	ps=con.prepareStatement("CREATE USER 'admin' identified with mysql_native_password BY 'admin@123'; ");
+	 result = ps.executeUpdate();
+	 out.println("<div class='result>'");
+	 if(result == 0)
 	{
-		out.println("<div class='result'><h3>Connected To Database</h3>");
+		
+		out.println("<h3>| CREATION OF USER SUCCESFULL |</h3>");
 	}
 	else
 	{
-		out.println("<h3>NOT Connected To Database</h3>");
+		out.println("<h3>| CREATION OF USER SUCCESFULL |</h3>");	
 	}
-	ps=con.prepareStatement("CREATE DATABASE IF NOT EXISTS hospital");
-	result = ps.executeUpdate();
-	if(result == 0)
-	{
-		out.println("<h3>Database not created</h3>");
-	}
-	else
-	{
-		out.println("<h3>Database Created</h3>");
-	}
-	ps=con.prepareStatement("USE hospital");
-	result=ps.executeUpdate();
-	if(result == 0)
-	{
-		out.println("<h3>Using hospital</h3>");
-	}
-	else
-	{
-		out.println("<h3>NOT Using hospital</h3>");
-	}
-	
-	out.println("<h3>Creating Table Admin</h3>");
-	
-	ps=con.prepareStatement("CREATE TABLE ADMIN(ADMIN_ID INT PRIMARY KEY,ADMIN_NAME VARCHAR(30),ADMIN_PRIORITY INT,ADMIN_EMAIL VARCHAR(50),ADMIN_PASSWORD VARCHAR(80))");
-	result=ps.executeUpdate();
-	if(result == 0)
-	{
-		out.println("<h3>Table Admin not created</h3>");
-	}
-	else
-	{
-		out.println("Table Admin Created");
-	}
-	ps=con.prepareStatement("CREATE TABLE ADMIN(ADMIN_ID INT PRIMARY KEY,ADMIN_NAME VARCHAR(30),ADMIN_PRIORITY INT,ADMIN_EMAIL VARCHAR(50),ADMIN_PASSWORD VARCHAR(80))");
-	result=ps.executeUpdate();
 	out.println("</div>");
-}
+	}
 catch(Exception e)
 {
 	e.printStackTrace();
 }
+
 
 %>
 </div>
