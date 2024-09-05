@@ -80,7 +80,7 @@ font-family: sans-serif;
 <div class="container">
 <form method="POST" action="Dbconfig.jsp">
 <field>
-<legend>Database Manipulation Console </legend>
+<legend>Database  Console </legend>
 <fieldset>
 <label for="dbUser">Database Username :</label>
 <input type="text" name="dbUser" id="dbUser"  required>
@@ -119,8 +119,19 @@ try{
 	{
 		out.println("<h3>| CREATION OF USER SUCCESFULL |</h3>");	
 	}
+	 ps=con.prepareStatement(" GRANT ALL privileges ON *.*  TO 'admin' WITH GRANT OPTION");
+	 	int sval = ps.executeUpdate();
+	 	if(sval==0)
+	 	{
+	 		out.println("Admin Priviledges granted");
+	 	}
+	 	else
+	 	{
+	 		out.println("Admin Priviledges not granted");
+	 	}
 	out.println("</div>");
 	}
+
 catch(Exception e)
 {
 	e.printStackTrace();

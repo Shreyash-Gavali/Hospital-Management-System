@@ -3,6 +3,7 @@
     <%@ page import="java.sql.*" %>
     <%@ page import="jakarta.servlet.*" %>
 <% 
+
 	Connection con = null;
 	PreparedStatement ps = null;
 	ResultSet rs = null;
@@ -11,10 +12,23 @@
 	String dbUser = "admin";
 	String dbPass="admin@123";
 	try{
-		Class.forName("com.mysql.jdbc.Driver");
+		Class.forName("com.mysql.cj.jdbc.Driver");
 		con=DriverManager.getConnection(dbUrl,dbUser,dbPass);
-		ps=con.prepareStatement("USE hospital");
+		
+		ps=con.prepareStatement("CREATE DATABASE IF NOT EXISTS hospitalmanagement");
 		int sval = ps.executeUpdate();
+		if(sval==0)
+		{
+			System.out.println("NOT CREATED `Database hospital`");
+			
+		}
+		else
+		{
+			System.out.println("CREATED `Database hospital`");
+			
+		}
+		 ps=con.prepareStatement("USE hospitalmanagement");
+		sval = ps.executeUpdate();
 		if(sval==0)
 		{
 			System.out.println("Using Database hospital");
@@ -22,7 +36,7 @@
 		else
 		{
 			System.out.println("Not Using Database hospital");
-		}
+		} 
 		
 	}
 	catch(Exception e)
