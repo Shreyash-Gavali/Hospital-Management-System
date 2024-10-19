@@ -1,0 +1,51 @@
+body {
+ scrollbar-width:none;
+}
+#navbar {
+  width: 85vw;
+  float: right;
+  height: 100px;
+}
+#sidebar {
+  /* overflow-x: scroll; */
+  scrollbar-width: none;
+}
+#submitPatient{
+  left: 40%
+}
+#container{
+	height: 100vh;
+	overflow: hidden;
+}
+.card {
+       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+		border: none;
+		border-radius: 15px;
+}
+.card-header {
+            background-color: #4e73df;
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+}
+.form-label {
+	font-weight: 600;
+}
+.input-group-text {
+ 	background-color: #4e73df;
+ 	color: white;
+	border: none;
+}
+.btn-primary {
+ 	background-color: #4e73df;
+ 	border: none;
+}
+.btn-primary:hover {
+	background-color: #2e59d9;
+}
+.btn-secondary {
+	background-color: #858796;
+	border: none;
+}
+.btn-secondary:hover {
+	background-color: #717384;
+}
