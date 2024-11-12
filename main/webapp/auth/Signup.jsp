@@ -22,10 +22,10 @@
   </head>
   <body>
     <div class="container mt-5">
-      <div class="row justify-content-center">
+      <div class="row justify-content-center mt-5">
         <div class="col-md-6">
-          <div class="card">
-            <div class="card-header text-center">
+          <div class="card mt-5">
+            <div class="card-header text-center mt-5">
               <div class="d-flex align-items-center justify-content-center">
                 <div class="icon-container">
                   <i class="bi bi-plus-square-fill fs-2"></i>

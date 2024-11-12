@@ -1,9 +1,30 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@page import="java.util.Date" %>
+<%@include file="/database/Connection.jsp" %>
+<%@page import="java.text.SimpleDateFormat" %>
+<%@page import="java.text.ParseException" %>
+<% 
+float amountToBePayed = 0;
+HttpSession s=request.getSession(false);
+if(s==null)
+{
+	response.sendRedirect(request.getContextPath()+"/Login");
+}
+else
+{
+	if(s.getAttribute("amountToBePayed")!=null)
+	{		
+ 		amountToBePayed=(Float)s.getAttribute("amountToBePayed");
+	}
+}
+ %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Page</title>
+    <title>Payment | Hospital Management System</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -50,6 +71,7 @@
             font-size: 1.2rem;
             padding: 10px;
         }
+        
     </style>
 </head>
 <body>
@@ -66,7 +88,7 @@
                 </div>
                 <div class="col-md-4 text-end staff-options">
                     <h5></h5>
-                    <a href="#" class="btn btn-outline-secondary btn-sm">Logout</a>
+                    <a href="<%=request.getContextPath() +"/Logout" %>" class="btn btn-outline-secondary btn-sm">Logout</a>
                     <a href="#" class="btn btn-outline-secondary btn-sm">Settings</a>
                 </div>
             </div>
@@ -76,32 +98,44 @@
     <!-- Payment Form -->
     <div class="container">
         <div class="form-container">
-            <form id="paymentForm">
+            <form id="paymentForm" method="POST" action="<%=request.getContextPath() +"/Verification" %>">
                 <div class="mb-3">
                     <label for="transactionId" class="form-label">Transaction ID:</label>
-                    <input type="text" class="form-control" id="transactionId" placeholder="Enter Transaction ID">
+                    <input type="text" class="form-control" id="transactionId" placeholder="Enter Transaction ID" disabled>
                 </div>
 
                 <div class="mb-3">
                     <label for="paymentMode" class="form-label">Payment Mode:</label>
                     <select class="form-select" id="paymentMode">
+                     <option>Select Payment Mode</option>
                         <option value="upi">UPI</option>
                         <option value="netbanking">Netbanking</option>
                     </select>
                 </div>
-
+				 <div class="mb-3">
+                    <label for="payerName" class="form-label">Amount To Be Payed</label>
+                    <input type="text" class="form-control" id="amountPayed" placeholder="" disabled value="<%=amountToBePayed %>">
+                </div>
                 <div class="mb-3">
                     <label for="payerName" class="form-label">Payer's Name:</label>
                     <input type="text" class="form-control" id="payerName" placeholder="Enter Payer's Name">
                 </div>
+               <!--  <div class="container" id="container">                
+                <div class="mb-3">
+                    <label for="payerName" class="form-label">Payer's Name:</label>
+                    <input type="text" class="form-control" id="payerName" placeholder="Enter Payer's Name">
+                </div> 
+                </div>-->
 
-                <div class="mb-3 text-center">
+	<div class="container d-flex justify-content-center" id="upi-container">
+	
+	</div>
+                <div class="mb-3 mt-3 text-center">
                     <button type="submit" class="btn btn-primary btn-pay">PAY</button>
                 </div>
             </form>
         </div>
     </div>
-
     <!-- Modal for Success -->
     <div class="modal fade" id="paymentSuccessModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -124,15 +158,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Custom JS -->
-    <script>
-        // Form submission event
-        document.getElementById('paymentForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent actual form submission
-
-            // Show success modal after payment
-            var successModal = new bootstrap.Modal(document.getElementById('paymentSuccessModal'));
-            successModal.show();
-        });
+    <script src="main/js/Payment.js">
+       
     </script>
 </body>
 </html>

@@ -1,6 +1,10 @@
  <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@ include file="/database/Connection.jsp" %>
+    <%@page import="java.text.SimpleDateFormat" %>
+    <%@page import="java.time.format.DateTimeFormatter" %>
+     <%@page import="java.time.format.DateTimeParseException" %>
+    <%@page import="java.time.LocalDateTime" %>
 <%--<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,15 +21,19 @@
 <body>
   --%>
 	<%
+	float totalFees = 0;
+	int patientId = 0;
+	String patientAddress = "";
 	String patientEmail = "";
 	String patientName = "";
 	int patientAge = 0;
 	String patientPhnNo="";
 	String patientDisease = "";
-	String patientAdmittedOn = "";
+	Timestamp patientAdmittedOn = null;
 	String patientDischargedOn = "";
 	String patientWard = "";
 	String existingEmail = "";
+	String patientBloodType = "";
 		if(request.getParameter("patientEmail")!=null && !request.getParameter("patientEmail").isEmpty())
 		{			
 			 patientEmail = request.getParameter("patientEmail");
@@ -46,19 +54,42 @@
 		{			
 			patientDisease = request.getParameter("patientDisease");
 		}
-		if(request.getParameter("patientAdmittedOn")!=null && !request.getParameter("patientAdmittedOn").isEmpty())
-		{			
-			patientAdmittedOn = request.getParameter("patientAdmittedOn");
+		if(request.getParameter("patientRegistered")!=null && !request.getParameter("patientRegistered").isEmpty())
+		{	
+			String admittedOnStr = request.getParameter("patientRegistered");
+
+			if (admittedOnStr != null && !admittedOnStr.isEmpty()) {
+			    try {
+			        // Adjusting the format to match the HTML datetime-local value
+			        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+			        LocalDateTime localDateTime = LocalDateTime.parse(admittedOnStr, formatter);
+			        
+			        // Converting LocalDateTime to Timestamp
+			         patientAdmittedOn = Timestamp.valueOf(localDateTime);
+			        System.out.println("Parsed Timestamp: " + patientAdmittedOn); // Debugging
+
+			    } catch (DateTimeParseException e) {
+			        e.printStackTrace(); // Handle parsing error
+			    }
+			} else {
+			    System.out.println("Admitted On value is missing or empty.");
+			}
+
+			
+			
 		}
-		/* if(request.getParameter("patientDischargedOn")!=null && !request.getParameter("patientDischargedOn").isEmpty())
+		 if(request.getParameter("patientAddress")!=null && !request.getParameter("patientAddress").isEmpty())
 		{			
-			patientDischargedOn = request.getParameter("patientDischargedOn");
-		} */
+			patientAddress = request.getParameter("patientAddress");
+		} 
 		if(request.getParameter("patientWard")!=null && !request.getParameter("patientWard").isEmpty())
 		{			
 			patientWard = request.getParameter("patientWard");
 		}
-		        		
+		if(request.getParameter("patientBloodType")!=null && !request.getParameter("patientBloodType").isEmpty())
+		{			
+			patientBloodType = request.getParameter("patientBloodType");
+		}       		
 		
 		ps=con.prepareStatement("SELECT PATIENT_EMAIL FROM PATIENT WHERE PATIENT_EMAIL=?");
 		ps.setString(1,patientEmail);
@@ -79,15 +110,17 @@
 			else
 			{
 				try{
-					ps=con.prepareStatement("INSERT INTO PATIENT(PATIENT_EMAIL,PATIENT_NAME,PATIENT_AGE,PATIENT_DISEASE,PATIENT_ADMITTED_ON,PATIENT_PH_NO,PATIENT_WARD_TYPE) VALUES (?,?,?,?,?,?,?)");
+					ps=con.prepareStatement("INSERT INTO PATIENT(PATIENT_EMAIL,PATIENT_NAME,PATIENT_AGE,PATIENT_DISEASE,PATIENT_ADMITTED_ON,PATIENT_PH_NO,PATIENT_WARD_TYPE,PATIENT_ADDRESS,PATIENT_BLOOD_TYPE) VALUES (?,?,?,?,?,?,?,?,?)");
 					ps.setString(1,patientEmail);
 					ps.setString(2,patientName);
 					ps.setInt(3,patientAge);
 					ps.setString(4,patientDisease);
-					ps.setString(5,patientAdmittedOn);
+					ps.setTimestamp(5,patientAdmittedOn);
 					/* ps.setString(6,""); */
 					ps.setString(6,patientPhnNo);
 					ps.setString(7,patientWard);
+					ps.setString(8,patientAddress);
+					ps.setString(9,patientBloodType);
 					int sval=ps.executeUpdate();
 					if(sval>=0)
 					{
@@ -96,6 +129,38 @@
 						 Registration Succesfull
 						</div>
 						<%
+						if(patientWard.equals("General"))
+						{
+							totalFees+=20000;
+						}
+						else
+						{
+							totalFees+=50000;
+						}
+						
+						try{
+							ps=con.prepareStatement("SELECT PATIENT_ID,PATIENT_EMAIL FROM PATIENT WHERE PATIENT_EMAIL=?");
+							ps.setString(1,patientEmail);
+							rs=ps.executeQuery();
+							if(rs.next())
+							{
+								patientEmail = rs.getString("PATIENT_EMAIL");
+								patientId=rs.getInt("PATIENT_ID");
+							}
+						}	
+						catch(Exception e)
+						{
+							e.printStackTrace();
+						}
+						ps=con.prepareStatement("INSERT INTO PAYMENT(TOTAL_FEES,WARD_TYPE,PATIENT_ID)VALUES(?,?,?)");
+						ps.setFloat(1,totalFees);
+						ps.setString(2,patientWard);
+						ps.setInt(3,patientId);
+						sval=ps.executeUpdate();
+						HttpSession s = request.getSession();
+		                s.setAttribute("patientEmail",patientEmail);
+		                s.setAttribute("patientId",patientId);
+						response.sendRedirect(request.getContextPath() +"/Patient");
 					}
 					else
 					{
@@ -120,7 +185,6 @@
 	
 	%>
 	
-    Bootstrap JS and Popper.js
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script src="script.js"></script>

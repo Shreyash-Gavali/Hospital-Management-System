@@ -13,11 +13,11 @@
 </head>
 <body>
     <section class="bg-light p-3 p-md-4 p-xl-5">
-        <div class="container">
+        <div class="container mt-5">
             <div class="row justify-content-center">
                 <div class="col-12 col-md-9 col-lg-7 col-xl-6 col-xxl-5">
                     <div class="card border border-light-subtle rounded-4">
-                        <div class="card-body p-3 p-md-4 p-xl-5">
+                        <div class="card-body p-3 p-md-4 p-xl-5 mt-5">
                             <h2 class="h4 text-center" style="color:rgb(227, 42, 42);">Login</h2>
                             <h3 class="fs-6 fw-normal text-secondary text-center m-0">Enter your details to login</h3>
 
@@ -122,15 +122,15 @@
     	 if(!pass.equals(existingPass))
     	{
     		%>
-    	   	 <div class="w-75 alert alert-danger position-absolute top-0" role="alert">
+    	   	 <div class="w-25 alert alert-danger position-absolute top-0 start-25" role="alert" id="alertbox">
     				Incorrect Password Entered
     			</div>
     	   		<%	
     	}
-    	else if(!email.equals(existingEmail))
+    	 if(!email.equals(existingEmail))
     	{
     		%>
-    	   	 <div class="w-75 alert alert-danger position-absolute top-0" role="alert">
+    	   	 <div class="w-25 alert alert-danger position-absolute top-0 start-25" role="alert" id="alertbox">
     				Incorrect Email Entered
     			</div>
     	   		<%	
@@ -154,5 +154,8 @@
    
     
      %>
+     <script>
+     
+     </script>
 </body>
 </html>
