@@ -1,5 +1,7 @@
 let upiContainer = document.querySelector("#upi-container");
 let paymentMode=document.querySelector("#paymentMode");
+
+
 paymentMode.addEventListener("change",()=>{
   if(paymentMode.value==="upi")
     {
@@ -7,13 +9,14 @@ paymentMode.addEventListener("change",()=>{
       upiContainer.innerHTML='<div class="card w-50 ">'+
 	   							 '<img src="./public/upi_1730202419481.png" type="png"class="card-img-top" alt="...">'+
 	  						'</div>';
+		
     }
 	else if(paymentMode.value === "netbanking")
 		{
 			upiContainer.innerHTML='<div class="container mt-5">'+
 			        					'<div class="card p-4">'+
 			            '<h5 class="card-title text-center">Enter Card Details</h5>'+
-			            '<form id="patientForm" method="POST" action="/Logout" class="mt-4">'+
+			            '<form id="patientForm" method="POST" action="<% request.getContextPath() +"/Verification" %>" class="mt-4">'+
 			                '<div class="row mb-3">'+
 			                  '<div class="col-md-6">'+
 			                        '<label for="cardNumber" class="form-label">Card Number</label>'+

@@ -6,6 +6,8 @@
 <%@ page import="java.sql.Timestamp" %>
 <%@ page import="org.json.JSONArray" %>
 <%@ page import="org.json.JSONObject" %>
+<%@ page import="com.google.gson.Gson" %>
+
 
 <%
 response.setContentType("application/json"); // Ensure content type is JSON
@@ -22,6 +24,7 @@ class PatientData {
     String patientWardType;
     String patientAddress;
     String patientBloodType;
+    
 
     public PatientData(int patientId, String patientName, int patientAge, String patientPhnNo, String patientEmail,
                        String patientDisease, Timestamp patientAdmittedOn, Timestamp patientLeftOn,
@@ -37,6 +40,7 @@ class PatientData {
         this.patientWardType = patientWardType;
         this.patientAddress = patientAddress;
         this.patientBloodType = patientBloodType;
+        
     }
 
     public JSONObject toJson() {
@@ -52,13 +56,15 @@ class PatientData {
         json.put("patientWardType", patientWardType);
         json.put("patientAddress", patientAddress);
         json.put("patientBloodType", patientBloodType);
+        
         return json;
     }
-    HashMap<Integer, PatientData> hashmapdata = new HashMap<>();
+   /*  HashMap<Integer, PatientData> hashmapdata = new HashMap<>();
     Gson gson = new Gson();
     String jsonResponse = gson.toJson(hashmapdata);
-    out.print(jsonResponse); // Send JSON data to client
-    out.flush();
+    out.println(" "+gson.toJson(hashmapdata));
+    /* out.print(jsonResponse); */ // Send JSON data to client
+    /* out.flush(); */ 
 }
 
 JSONArray jsonArray = new JSONArray();
@@ -82,6 +88,7 @@ try {
         );
         
         jsonArray.put(patient.toJson()); // Add each patient's data as JSON
+        
     }
 
     // Output JSON array as the response
@@ -94,3 +101,5 @@ try {
     if (con != null) con.close();
 }
 %>
+
+

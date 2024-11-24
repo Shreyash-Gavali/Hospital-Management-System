@@ -1,146 +1,103 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-    <%@page import="java.text.DecimalFormat" %>
-    <%
-    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    response.setHeader("Pragma", "no-cache");
-    response.setDateHeader("Expires", 0);
-%>
-    <%
-    float amountToBePayed = 0;
-    String patientEmail = "";
-   String sessionId = null;
-   Cookie[] cookies = request.getCookies();
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/database/Connection.jsp" %>
+<% String sessionId = null;
+	Cookie[] cookies = request.getCookies();
 
-   if (cookies != null) {
-       for (Cookie cookie : cookies) {
-           if (cookie.getName().equals("JSESSIONID")) {
-               sessionId = cookie.getValue();
-               System.out.println(sessionId);
-               break;
-           }
+if (cookies != null) {
+   for (Cookie cookie : cookies) {
+       if (cookie.getName().equals("JSESSIONID")) {
+           sessionId = cookie.getValue();
+           break;
        }
    }
-    
+} 
 
-    HttpSession s=request.getSession();
-    if(s==null)
-    {
-    	response.sendRedirect(request.getContextPath()+"/Login");
-    }
-    else
-    {
-    	if(sessionId!=null)
-    	{
-    		if(sessionId.equals(session.getId()))
-    		{
-    			
-    		
-    	if(s.getAttribute("amountToBePayed")!=null)
-    	{		
-     		amountToBePayed=(Float)s.getAttribute("amountToBePayed");
-    	}
-    	if(s.getAttribute("patientEmail")!=null)
-    	{		
-	     	patientEmail =(String)s.getAttribute("patientEmail");
-    	}
-    	
-    
-    %>
-    <%
-   	 	String OTP = "";
-		double rand = 0;
-		int max = 7;
-		int min = 1;
-		DecimalFormat df = new DecimalFormat("######");
-		rand = Math.random()*(max-min+1)*100000;
-		OTP=df.format(rand);
-		System.out.println(df.format(rand));
-		s.setAttribute("OTP",OTP);
-    
-    %>
-<!DOCTYPE html>
-<html>
-<head>
- <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/components/registrations/registration-7/assets/css/registration-7.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTP Verification | Hospital Management System</title>
-</head>
-<body>
- <section class="bg-light p-3 p-md-4 p-xl-5">
-        <div class="container mt-5">
-            <div class="row justify-content-center">
-                <div class="col-12 col-md-9 col-lg-7 col-xl-6 col-xxl-5">
-                    <div class="card border border-light-subtle rounded-4">
-                        <div class="card-body p-3 p-md-4 p-xl-5 mt-5">
-                            <h2 class="h4 text-center" style="color:rgb(227, 42, 42);">Enter OTP </h2>
-                            <h3 class="fs-5 fw-normal text-secondary text-center m-0 mt-4">Sent to <%=patientEmail %></h3>
-                            
+String paymentMode = request.getParameter("paymentMode");
+String patientEmail = "";
+int patientId=0;
+if(request.getParameter("patientId")!=null)
+{
+	 patientId=Integer.parseInt(request.getParameter("patientId"));	
+}
+float amountToBePayed=0;
+if(request.getParameter("amountPayed")!=null)
+{
+	amountToBePayed=Float.parseFloat(request.getParameter("amountPayed"));	
+}
+float feesPayed = 0;
+int paymentId = 0;
+/*  out.println("Amount Payed"+amountToBePayed);*/
+HttpSession s=request.getSession();
+if(s!=null && sessionId!=null && sessionId.equals(session.getId()))
+{
+	if( s.getAttribute("patientId")!=null && s.getAttribute("feesPayed")!=null)
+	{
+		
+		/* patientId = (Integer)s.getAttribute("patientId"); 
+		/* amountToBePayed = (Float)s.getAttribute("amountToBePayed"); */
+		System.out.println("Amoutn Payed"+amountToBePayed);
+		 feesPayed= (Float)s.getAttribute("feesPayed");
+		 System.out.println("Fees Payed"+feesPayed);
+	}
+	
+	try{
+		ps=con.prepareStatement("SELECT PAYMENT_ID FROM PAYMENT WHERE PATIENT_ID=?");
+		ps.setInt(1,patientId);
+		System.out.println("VERIFICATION PATIENT ID = "+patientId);
+		rs=ps.executeQuery();
+		if(rs.next())
+		{
+			paymentId = rs.getInt("PAYMENT_ID");
+			try{
+				ps=con.prepareStatement("UPDATE PAYMENT SET FEES_PAID=?,PAYMENT_STATUS=?,FEES_DUE=? WHERE PAYMENT_ID=?");
+				ps.setFloat(1,amountToBePayed);
+				ps.setString(2,"Payed");
+				ps.setInt(3,0);
+				ps.setInt(4,paymentId);
+				System.out.println("VERIFICATION AMOUNT TO BE PAYED = "+amountToBePayed);
+				System.out.println("VERIFICATION PAYMENT ID = "+paymentId);
+				
+				int updateResult = ps.executeUpdate();
+				if(updateResult>0)
+				{
+					System.out.print("Update Succesfull");	
+				}
+				else
+				{
+					System.out.print("Update Not Succesfull");
+				}
+				ps=con.prepareStatement("INSERT INTO TRANSACTION(TRANSACTION_DATE,TRANSACTION_TYPE,TRANSACTION_AMOUNT,PATIENT_ID)VALUE(CURRENT_TIMESTAMP,?,?,?)");
+				ps.setString(1,paymentMode);
+				ps.setFloat(2,amountToBePayed);
+				ps.setInt(3,patientId);
+				System.out.println("VERIFICATION PAYMENT MODE = "+paymentMode);
+				System.out.println("VERIFICATION AMOUNT TO BE PAYED = "+amountToBePayed);
+				System.out.println("VERIFICATION PATIENT ID = "+patientId);
+				 int result=ps.executeUpdate();
+				if(result>0)
+				{
+					System.out.print("Update Succesfull");	
+				}
+				else
+				{
+					System.out.print("Update Not Succesfull");
+				}
+				
+			}
+			
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+	}
+	response.sendRedirect(request.getContextPath()+"/Patient;jsessionid="+sessionId);
+	
+}
 
-                            <form action="<%= request.getContextPath() +"/Verify"  %>" method="POST">
-                                <div class="form-floating mb-3 mt-3">
-                                    <input type="password" class="form-control" name="otp" id="otp" placeholder="OTP" required>
-                                    <label for="password">Enter Six Digit OTP</label>
-                                </div>
-                                
-                                <div class="d-grid">
-                                    <button class="btn bsb-btn-xl btn-primary mt-4" type="submit" id="confirm"> Pay ₹<%=amountToBePayed %></button>
-                                </div>
-                            </form>
-                            <hr class="mt-5 mb-4 border-secondary-subtle">
-							<p class="m-0 text-secondary text-center mt-2">
-                                   OTP will expire in <span id="time">0:00</span>
-                                </p>
-                            <div class="d-flex justify-content-center mt-3">
-                                <p class="m-0 text-secondary text-center">DO NOT CLOSE OR REFRESH THE PAGE
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <%
-    	int userInput= 0;
-    	if(request.getParameter("OTP")!=null)
-    	{
-    		userInput=Integer.parseInt(request.getParameter("OTP"));
-    		
-    	}
-    	
-    	if(df.format(rand)==df.format(userInput))
-    	{
-    		  s=request.getSession();
-    		    if(s==null)
-    		    {
-    		    	//response.sendRedirect(request.getContextPath()+"/Login");
-    		    }
-    		    else
-    		    {
-    		    	/* RequestDispatcher dispatcher = request.getRequestDispatcher("/Patient");
-    		    	dispatcher.forward(request, response); */
-    				 response.sendRedirect(request.getContextPath()+"/Payment;jsessionid="+sessionId); 
-    		    }
-    	}
-    	else
-    	{
-    		%>
-    			<button type="button" class="btn btn-primary">
-  				Incorrect  <span class="badge text-bg-secondary">OTP</span>
-				</button>
-    		<% 
-    	}
-    	}
-    	}
-    }
-    %>
-    </section>
-    <script src="main/js/Verification.js">
-  
 
-    </script>
-    
-</body>
-</html>
+%> 

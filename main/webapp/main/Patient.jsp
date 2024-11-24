@@ -10,6 +10,7 @@
 
 %>
 <%
+
 float totalFees=0;
 String NewpatientEmail = "";
 	String patientName = "";
@@ -89,7 +90,9 @@ System.out.println(patientId);
         		{
         			patientName=rs.getString("PATIENT_NAME");
                 		out.println(patientName);
-                		patientId=rs.getInt("PATIENT_ID"); 
+                		patientId=rs.getInt("PATIENT_ID");
+                		 s.setAttribute("patientEmail", patientEmail);
+   			            s.setAttribute("patientId", patientId);
             			patientName = rs.getString("PATIENT_NAME");	
             			patientDisease=rs.getString("PATIENT_DISEASE");
             			patientAdmittedOn = rs.getTimestamp("PATIENT_ADMITTED_ON");
@@ -104,8 +107,12 @@ System.out.println(patientId);
             			if(patientDischargedOn!=null)
             			{
             				
-        			    patientLeftOnFormatted = sdf.format(patientDischargedOn);
-            			System.out.println(patientLeftOnFormatted);
+        			   	 	patientLeftOnFormatted = sdf.format(patientDischargedOn);
+            				System.out.println(patientLeftOnFormatted);
+            			}
+            			else
+            			{
+            				patientLeftOnFormatted = "Yet To Be Discharged";
             			}
             			patientWard=rs.getString("PATIENT_WARD_TYPE");
             			patientAddress=rs.getString("PATIENT_ADDRESS");
@@ -168,19 +175,19 @@ System.out.println(patientId);
       				<td class="p-4"><%=patientAddress %> </td>
       				<td class="p-4"><%=patientBloodType %> </td>
       				<% 
-      				ps=con.prepareStatement("SELECT TOTAL_FEES,FEES_DUE FROM PAYMENT WHERE PATIENT_ID = ?");
+      				ps=con.prepareStatement("SELECT TOTAL_FEES,FEES_DUE,FEES_PAID FROM PAYMENT WHERE PATIENT_ID = ?");
       				ps.setInt(1,patientId);
       				rs=ps.executeQuery();
       						
       				if(rs.next()){
       							patientFeesDue=rs.getFloat("FEES_DUE");
       							totalFees=rs.getFloat("TOTAL_FEES");
-      							patientFeesDue=totalFees-patientFeesPaid;
-      							patientFeesPaid=totalFees-patientFeesDue;
+      							patientFeesPaid=rs.getFloat("FEES_PAID");
       							
       							 s = request.getSession();
       			                s.setAttribute("amountToBePayed", patientFeesDue);
-      			              s.setAttribute("patientEmail", patientEmail);
+      			             
+      			            s.setAttribute("feesPaid",patientFeesPaid);
       			             
       			                
       						}
@@ -195,7 +202,7 @@ System.out.println(patientId);
  <h5 class=" text-center">Transactions</h5>
 <thead class="table-dark">
 <tr>
-
+		
       <th scope="col" class="p-4">Transaction ID</th>
       <th scope="col" class="p-4">Transaction Date</th>
       <th scope="col" class="p-4">Transaction Type</th>
@@ -208,7 +215,7 @@ System.out.println(patientId);
 		ps=con.prepareStatement("SELECT * FROM TRANSACTION WHERE PATIENT_ID = ?");
 		ps.setInt(1,patientId);
 		rs=ps.executeQuery();
-		if(rs.next())
+		while(rs.next())
 		{
 			transactionId=rs.getInt("TRANSACTION_ID");
 			transactionDate=rs.getTimestamp("TRANSACTION_DATE");
@@ -218,7 +225,7 @@ System.out.println(patientId);
 
 %>
 	<% if(transactionId!=-1 && transactionDate!=null && transactionType!="" && transactionAmount!=0)
-{
+	{
 	%>
 	<td><%=transactionId %></td>
 	<td><%=transactionDate %></td>
@@ -241,9 +248,9 @@ System.out.println(patientId);
 </tbody>
 </table>
  <div class="row mt-4">
-                    <div class="col-md-6">
+                    <div class="col-md-6 w-100">
                     	<%
-                    	if(totalFees==0)
+                    	if(patientFeesDue==0)
                     	{
                     		%>
                         <button type="button" class="btn btn-primary w-100" disabled onclick="<%= request.getContextPath()+"/Payment" %>" >Pay</button>
@@ -255,6 +262,7 @@ System.out.println(patientId);
                     	%>
                 				<form method="POST" action="<%=request.getContextPath() +"/Payment" %>">
                 						<input type="text" value="<%=patientId %>" hidden>
+                						<input type="text" value="<%=patientFeesDue %>" hidden name="amountPayed">
         							
                     		
                     		 <button type="submit" class="btn btn-primary w-100"  href="<%= request.getContextPath()+"/Payment" %>" >Pay</button>
@@ -264,9 +272,7 @@ System.out.println(patientId);
                     	
                     	%>
                     </div>
-                    <div class="col-md-6">
-                        <button type="reset" class="btn btn-secondary w-100">Download Patient Reports</button>
-                    </div>
+                    
                   
                 </div>
                

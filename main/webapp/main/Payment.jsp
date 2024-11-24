@@ -6,18 +6,38 @@
 <%@page import="java.text.ParseException" %>
 <% 
 float amountToBePayed = 0;
+float amountPayed = 0;
+int patientId = 0;
+float feesPaid=0;
 HttpSession s=request.getSession(false);
+
 if(s==null)
 {
 	response.sendRedirect(request.getContextPath()+"/Login");
 }
 else
 {
-	if(s.getAttribute("amountToBePayed")!=null)
+	if(s.getAttribute("amountToBePayed")!=null && (s.getAttribute("patientId")!=null) && (s.getAttribute("feesPaid")!=null))
 	{		
- 		amountToBePayed=(Float)s.getAttribute("amountToBePayed");
+ 		/*amountToBePayed=(Float)s.getAttribute("amountToBePayed");*/ 
+ 		patientId=(Integer)s.getAttribute("patientId");
+ 		feesPaid=(Float)s.getAttribute("feesPaid");
 	}
+	
+
+    // Forward the request to the next page (no redirect, just forwarding)
+   /*  RequestDispatcher dispatcher = request.getRequestDispatcher("/Verification");
+    dispatcher.forward(request, response);
+	 */
+	 
+if(request.getParameter("amountPayed")!=null)
+{
+	amountPayed=Float.parseFloat(request.getParameter("amountPayed"));
+	System.out.println("Payment Page amount payes"+amountPayed);
 }
+s.setAttribute("amountToBePayed",amountToBePayed);
+s.setAttribute("patientId",patientId);
+s.setAttribute("feesPaid",feesPaid);
  %>
 <!DOCTYPE html>
 <html lang="en">
@@ -99,14 +119,10 @@ else
     <div class="container">
         <div class="form-container">
             <form id="paymentForm" method="POST" action="<%=request.getContextPath() +"/Verification" %>">
-                <div class="mb-3">
-                    <label for="transactionId" class="form-label">Transaction ID:</label>
-                    <input type="text" class="form-control" id="transactionId" placeholder="Enter Transaction ID" disabled>
-                </div>
 
                 <div class="mb-3">
                     <label for="paymentMode" class="form-label">Payment Mode:</label>
-                    <select class="form-select" id="paymentMode">
+                    <select class="form-select" id="paymentMode" name="paymentMode">
                      <option>Select Payment Mode</option>
                         <option value="upi">UPI</option>
                         <option value="netbanking">Netbanking</option>
@@ -114,12 +130,21 @@ else
                 </div>
 				 <div class="mb-3">
                     <label for="payerName" class="form-label">Amount To Be Payed</label>
-                    <input type="text" class="form-control" id="amountPayed" placeholder="" disabled value="<%=amountToBePayed %>">
+                    <input type="text" class="form-control" id="amountPayed" placeholder="" disabled value=<%=amountPayed %>>
                 </div>
                 <div class="mb-3">
                     <label for="payerName" class="form-label">Payer's Name:</label>
                     <input type="text" class="form-control" id="payerName" placeholder="Enter Payer's Name">
                 </div>
+                <input type="text" hidden value=<%=patientId %> name="patientId">
+                <input type="text" hidden value=<%=amountPayed %> name="amountPayed">
+                <% 
+// Set the session attributes in the request scope for the next page
+
+%>
+
+
+
                <!--  <div class="container" id="container">                
                 <div class="mb-3">
                     <label for="payerName" class="form-label">Payer's Name:</label>
@@ -131,7 +156,7 @@ else
 	
 	</div>
                 <div class="mb-3 mt-3 text-center">
-                    <button type="submit" class="btn btn-primary btn-pay">PAY</button>
+                    <button type="submit" class="btn btn-primary btn-pay" id="payBtn">PAY</button>
                 </div>
             </form>
         </div>
@@ -153,7 +178,10 @@ else
             </div>
         </div>
     </div>
+<%
 
+}
+%>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -163,3 +191,7 @@ else
     </script>
 </body>
 </html>
+
+
+
+

@@ -22,6 +22,8 @@
   --%>
 	<%
 	float totalFees = 0;
+	float feesDue = 0;
+	float feesPaid=0;
 	int patientId = 0;
 	String patientAddress = "";
 	String patientEmail = "";
@@ -132,10 +134,27 @@
 						if(patientWard.equals("General"))
 						{
 							totalFees+=20000;
+							if(totalFees-feesPaid<0)
+							{
+								feesDue=(totalFees-feesPaid)*(-1);
+							}
+							else
+							{
+								feesDue=totalFees-feesPaid;
+							}
+							
 						}
 						else
 						{
 							totalFees+=50000;
+							if(totalFees-feesPaid<0)
+							{
+								feesDue=(totalFees-feesPaid)*(-1);
+							}
+							else
+							{
+								feesDue=totalFees-feesPaid;
+							}
 						}
 						
 						try{
@@ -152,10 +171,12 @@
 						{
 							e.printStackTrace();
 						}
-						ps=con.prepareStatement("INSERT INTO PAYMENT(TOTAL_FEES,WARD_TYPE,PATIENT_ID)VALUES(?,?,?)");
+						ps=con.prepareStatement("INSERT INTO PAYMENT(TOTAL_FEES,FEES_PAID,FEES_DUE,WARD_TYPE,PATIENT_ID)VALUES(?,?,?,?,?)");
 						ps.setFloat(1,totalFees);
-						ps.setString(2,patientWard);
-						ps.setInt(3,patientId);
+						ps.setFloat(2,feesPaid);
+						ps.setFloat(3,feesDue);
+						ps.setString(4,patientWard);
+						ps.setInt(5,patientId);
 						sval=ps.executeUpdate();
 						HttpSession s = request.getSession();
 		                s.setAttribute("patientEmail",patientEmail);
