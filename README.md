@@ -6,6 +6,7 @@ The Hospital Management Web Platform is a comprehensive web-based application de
 ## Authors
 
 - [@Shreyash-Gavali](https://www.github.com/shreyash-gavali)
+- [@Adit-Choudhari](https://github.com/AditChoudhari0001)
 
 
 ## Run Locally
