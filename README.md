@@ -75,5 +75,5 @@ Clone the project
 
 ## Support
 
-For support, email shreyashgavali21@gmail.com 
+For support, email shreyashgavali21@gmail.com , aditchoudhari8@gmail.com
 
